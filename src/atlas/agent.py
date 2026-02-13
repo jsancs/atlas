@@ -1,5 +1,6 @@
 from typing import Optional, Any, Union
 from pydantic_ai import Agent
+from .tools import list_files, read_file, write_file, run_shell_command
 
 
 class AtlasAgent:
@@ -18,6 +19,12 @@ class AtlasAgent:
         self.agent = Agent[None, str](
             model=model,
             system_prompt=system_prompt,
+            tools=[
+                list_files,
+                read_file,
+                write_file,
+                run_shell_command,
+            ],
         )
 
     async def run(self, user_prompt: str, **kwargs: Any) -> Any:
