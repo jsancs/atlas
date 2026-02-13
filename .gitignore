@@ -8,3 +8,13 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Environment variables
+.env
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+coverage.xml
