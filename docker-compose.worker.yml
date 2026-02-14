@@ -1,0 +1,8 @@
+services:
+  agent:
+    build: .
+    container_name: atlas-agent-worker
+    environment:
+      - REDIS_URL=redis://host.docker.internal:6379/0 # Points to the master Redis on the host
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    restart: always
