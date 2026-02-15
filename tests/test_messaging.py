@@ -1,3 +1,4 @@
+import asyncio
 import pytest
 from datetime import datetime, timezone
 from atlas.messaging import AtlasMessage, RedisManager
@@ -79,16 +80,17 @@ async def test_redis_manager_listen(mock_redis, monkeypatch):
         await manager.send_message(message)
 
     # Start sending message in the background
-    import asyncio
     asyncio.create_task(send_later())
 
     # Listen for the message
     received = None
     try:
         # Use wait_for to avoid hanging forever if the test fails
-        async for msg in manager.listen(agent_name):
-            received = msg
-            break
+        async def get_one():
+            async for msg in manager.listen(agent_name):
+                return msg
+        
+        received = await asyncio.wait_for(get_one(), timeout=1.0)
     except asyncio.TimeoutError:
         pytest.fail("Listen timed out")
 

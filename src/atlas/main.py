@@ -1,7 +1,6 @@
 import argparse
 import asyncio
 import os
-import sys
 
 from dotenv import load_dotenv
 
@@ -77,22 +76,29 @@ async def serve(name: str, model: str, redis_url: str):
 
 async def send(target: str, msg: str, user: str, source: str, redis_url: str):
     redis_manager = RedisManager(redis_url)
-    message = AtlasMessage(
-        source=source,
-        user=user,
-        destination=target,
-        msg=msg,
-    )
-    
-    print(f"Sending message to '{target}'...")
-    await redis_manager.send_message(message)
-    
-    print(f"Waiting for response on '{source}'...")
-    async for response in redis_manager.listen(source):
-        print(f"\nResponse from '{response.source}':\n{response.msg}")
-        break
-    
-    await redis_manager.close()
+    try:
+        message = AtlasMessage(
+            source=source,
+            user=user,
+            destination=target,
+            msg=msg,
+        )
+        
+        print(f"Sending message to '{target}'...")
+        await redis_manager.send_message(message)
+        
+        print(f"Waiting for response on '{source}' (timeout: 30s)...")
+        try:
+            async def get_response():
+                async for response in redis_manager.listen(source):
+                    return response
+
+            response = await asyncio.wait_for(get_response(), timeout=30.0)
+            print(f"\nResponse from '{response.source}':\n{response.msg}")
+        except asyncio.TimeoutError:
+            print(f"\nError: No response received from '{target}' within 30 seconds.")
+    finally:
+        await redis_manager.close()
 
 
 def cli():

@@ -1,7 +1,6 @@
-import json
 import uuid
 from datetime import datetime, timezone
-from typing import AsyncGenerator, Optional
+from typing import AsyncGenerator
 
 from pydantic import BaseModel, Field
 from redis.asyncio import Redis
