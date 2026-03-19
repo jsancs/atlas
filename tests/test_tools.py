@@ -1,5 +1,4 @@
 import pytest
-import tempfile
 from pathlib import Path
 from atlas.tools import list_files, read_file, write_file, run_shell_command
 

@@ -63,10 +63,43 @@ docker compose -f docker-compose.master.yml up -d
 
 To run an Atlas agent worker, connecting to the master Redis:
 ```bash
-# Ensure OPENAI_API_KEY is set in your environment
+# Ensure OPENAI_API_KEY and AGENT_NAME are set in your environment
 export OPENAI_API_KEY="your_openai_api_key"
+export AGENT_NAME="worker-1"
 docker compose -f docker-compose.worker.yml up -d
 ```
+
+### Docker Configuration
+
+The Docker image is optimized for caching and can be configured using environment variables:
+
+- `AGENT_NAME`: The unique name for the agent (defaults to `container-agent`).
+- `REDIS_URL`: The URL of the Redis server (defaults to `redis://redis:6379/0`).
+
+### Testing the Orchestration
+
+To verify the setup is working correctly, you can follow these steps:
+
+#### Local (Mac)
+1. **Start Redis**: `docker run -d -p 6379:6379 --name atlas-redis redis`
+2. **Start Agent**: `uv run atlas serve --name mac-agent`
+3. **Send Message**: In a new terminal, run:
+   ```bash
+   uv run atlas send --to mac-agent --msg "What time is it?"
+   ```
+
+#### Docker
+1. **Start Master (Redis)**: `docker compose -f docker-compose.master.yml up -d`
+2. **Start Worker (Agent)**:
+   ```bash
+   export OPENAI_API_KEY="your-key"
+   export AGENT_NAME="docker-agent"
+   docker compose -f docker-compose.worker.yml up -d
+   ```
+3. **Send Message**:
+   ```bash
+   uv run atlas send --to docker-agent --msg "Hello from Docker"
+   ```
 
 To stop the services:
 ```bash

@@ -1,4 +1,4 @@
-from typing import Optional, Any, Union
+from typing import Optional, Any
 from pydantic_ai import Agent
 from .tools import list_files, read_file, write_file, run_shell_command
 

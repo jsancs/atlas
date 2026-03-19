@@ -25,7 +25,7 @@ async def run_interactive(model: str):
             prompt = input("> ")
             if prompt.lower() in ("exit", "quit"):
                 break
-            
+
             response = await agent.run(prompt)
             print(f"\nAtlas: {response}\n")
         except EOFError:
@@ -45,12 +45,14 @@ async def serve(name: str, model: str, redis_url: str):
     print(f"Starting agent '{name}' listening on {redis_url}...")
     try:
         async for message in redis_manager.listen(name):
-            print(f"[{message.timestamp}] Received request from '{message.source}' (user: {message.user}): {message.msg}")
-            
+            print(
+                f"[{message.timestamp}] Received request from '{message.source}' (user: {message.user}): {message.msg}"
+            )
+
             try:
                 # Run the agent
                 result = await agent.run(message.msg)
-                
+
                 # Send response back
                 response = AtlasMessage(
                     source=name,
@@ -59,7 +61,9 @@ async def serve(name: str, model: str, redis_url: str):
                     msg=str(result),
                 )
                 await redis_manager.send_message(response)
-                print(f"[{response.timestamp}] Sent response to '{response.destination}'")
+                print(
+                    f"[{response.timestamp}] Sent response to '{response.destination}'"
+                )
             except Exception as e:
                 print(f"Error processing message: {e}")
                 error_response = AtlasMessage(
@@ -83,12 +87,13 @@ async def send(target: str, msg: str, user: str, source: str, redis_url: str):
             destination=target,
             msg=msg,
         )
-        
+
         print(f"Sending message to '{target}'...")
         await redis_manager.send_message(message)
-        
+
         print(f"Waiting for response on '{source}' (timeout: 30s)...")
         try:
+
             async def get_response():
                 async for response in redis_manager.listen(source):
                     return response
@@ -107,20 +112,32 @@ def cli():
 
     # Interactive mode (default-ish)
     interactive_parser = subparsers.add_parser("chat", help="Start interactive chat")
-    interactive_parser.add_argument("--model", default=DEFAULT_MODEL, help="Model to use")
+    interactive_parser.add_argument(
+        "--model", default=DEFAULT_MODEL, help="Model to use"
+    )
 
     # Serve mode
-    serve_parser = subparsers.add_parser("serve", help="Start agent in Redis listener mode")
-    serve_parser.add_argument("--name", required=True, help="Unique name for this agent")
+    serve_parser = subparsers.add_parser(
+        "serve", help="Start agent in Redis listener mode"
+    )
+    serve_parser.add_argument(
+        "--name", required=True, help="Unique name for this agent"
+    )
     serve_parser.add_argument("--model", default=DEFAULT_MODEL, help="Model to use")
-    serve_parser.add_argument("--redis-url", default=DEFAULT_REDIS_URL, help="Redis URL")
+    serve_parser.add_argument(
+        "--redis-url", default=DEFAULT_REDIS_URL, help="Redis URL"
+    )
 
     # Send mode
-    send_parser = subparsers.add_parser("send", help="Send a message to an agent via Redis")
+    send_parser = subparsers.add_parser(
+        "send", help="Send a message to an agent via Redis"
+    )
     send_parser.add_argument("--to", required=True, help="Target agent name")
     send_parser.add_argument("--msg", required=True, help="Message to send")
     send_parser.add_argument("--user", default="default-user", help="User ID")
-    send_parser.add_argument("--source", default="cli-client", help="Source agent/client name")
+    send_parser.add_argument(
+        "--source", default="cli-client", help="Source agent/client name"
+    )
     send_parser.add_argument("--redis-url", default=DEFAULT_REDIS_URL, help="Redis URL")
 
     args = parser.parse_args()

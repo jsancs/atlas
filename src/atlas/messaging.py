@@ -30,7 +30,9 @@ class AtlasMessage(BaseModel):
         """Create an AtlasMessage from a Redis Stream dictionary."""
         # Redis returns bytes for keys and values, so we need to decode them
         decoded_data = {
-            k.decode("utf-8") if isinstance(k, bytes) else k: v.decode("utf-8") if isinstance(v, bytes) else v
+            k.decode("utf-8") if isinstance(k, bytes) else k: v.decode("utf-8")
+            if isinstance(v, bytes)
+            else v
             for k, v in data.items()
         }
         return cls(**decoded_data)
