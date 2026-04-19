@@ -9,7 +9,7 @@ from .messaging import AtlasMessage, RedisManager
 
 load_dotenv()
 
-DEFAULT_MODEL = os.getenv("ATLAS_MODEL", "openai:gpt-4o")
+DEFAULT_MODEL = os.getenv("ATLAS_MODEL", "openai:gpt-5-nano")
 DEFAULT_REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 

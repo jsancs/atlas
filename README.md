@@ -17,7 +17,7 @@ Atlas is an AI agent framework with built-in Redis orchestration for cross-machi
    Edit `.env` with your settings (e.g., your OpenAI API key):
    ```env
    OPENAI_API_KEY=your_key_here
-   ATLAS_MODEL=openai:gpt-4o
+   ATLAS_MODEL=openai:gpt-5-nano
    REDIS_URL=redis://localhost:6379/0
    ```
    When running `docker compose`, variables defined in your `.env` file (if present in the same directory as the `docker-compose` file) will be automatically picked up for environment variable substitution. This means you do not need to `export` them manually if they are in your `.env` file.

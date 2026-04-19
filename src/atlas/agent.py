@@ -1,6 +1,6 @@
 from typing import Optional, Any
 from pydantic_ai import Agent
-from .tools import list_files, read_file, write_file, run_shell_command
+from .tools import list_files, read_file, write_file, run_shell_command, call_agent
 
 
 class AtlasAgent:
@@ -24,6 +24,7 @@ class AtlasAgent:
                 read_file,
                 write_file,
                 run_shell_command,
+                call_agent,
             ],
         )
 
