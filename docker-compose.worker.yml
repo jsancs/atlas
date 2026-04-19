@@ -1,0 +1,11 @@
+services:
+  agent:
+    build: .
+    container_name: atlas-agent-worker
+    environment:
+      # NOTE: host.docker.internal works on macOS/Windows. 
+      # On Linux, you might need to use --network="host" or find the host's IP.
+      - REDIS_URL=redis://host.docker.internal:6379/0 
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - AGENT_NAME=${AGENT_NAME:-worker-agent}
+    restart: always

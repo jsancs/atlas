@@ -1,0 +1,21 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: atlas-redis-master
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: atlas-redisinsight-master
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+    restart: always
+
+volumes:
+  redis_data:
